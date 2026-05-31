@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
 
     steps:
     - name: Checkout code
@@ -17,29 +17,18 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
+        python-version: '3.9'
 
     - name: Install system dependencies
       run: |
         sudo apt update
-        sudo apt install -y python3-pip libffi-dev libssl-dev zlib1g-dev libncurses5-dev libgdbm-dev libc6-dev libnss3-dev libreadline-dev libsqlite3-dev wget llvm openjdk-17-jdk unzip
-        sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+        sudo apt install -y python3-pip openjdk-11-jdk unzip
 
     - name: Install Python dependencies
       run: |
         pip install --upgrade pip
-        pip install buildozer==1.5.0 cython==0.29.36 kivy==2.2.1
+        pip install buildozer==1.4.0
 
-    - name: Build APK with Buildozer
+    - name: Build APK
       run: |
-        buildozer android debug deploy run
-      env:
-        BUILDOZER_NO_ANDROID_SDK: 1
-        ANDROIDSDK: /root/.buildozer/android/platform/android-sdk
-        ANDROIDNDK: /root/.buildozer/android/platform/android-ndk-r25b
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: clothing-factory-app
-        path: bin/*.apk
+        buildozer android debug
